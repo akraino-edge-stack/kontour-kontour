@@ -1,0 +1,198 @@
+description: Stack built for INTER NODE topology. All referred generated resources are prefixed with the template
+  name (i.e. KT_INTER_NODE). Creates 1 VM each on two different compute nodes.
+heat_template_version: '2015-04-30'
+parameters:
+  key_name:
+    type: string
+    label: Key Name
+    description: Name of key-pair to be used for compute instance
+  image_id:
+    type: string
+    label: Image ID
+    description: Image to be used for compute instance
+  router_id:
+    type: string
+    label: Router ID
+    description: Router to be used from master VM
+  external_net_name:
+    type: string
+    label: External Network Name
+    description: Name of the external network with FIP
+  subnet_cidr:
+    type: string
+    label: Subnet CIDR
+    description: SSH subnet CIDR for traffic
+
+outputs:
+  server1.KT_INTER_NODE:
+    description: VM UUID
+    value: {get_resource: server1.KT_INTER_NODE}
+  server1.KT_INTER_NODE-fip:
+    description: floating ip server1.KT_INTER_NODE-fip
+    value:
+      get_attr: [server1.KT_INTER_NODE-fip, ip]
+  server1.KT_INTER_NODE-test-port0:
+    description: Address for interface server1.KT_INTER_NODE-test-port0
+    value:
+      get_attr: [server1.KT_INTER_NODE-test-port0, fixed_ips,
+        0, ip_address]
+  server1.KT_INTER_NODE.hypervisor_hostname:
+    description: VM hypervisor name
+    value:
+      get_attr: [server1.KT_INTER_NODE, show, 'OS-EXT-SRV-ATTR:hypervisor_hostname']
+  server1.KT_INTER_NODE.instance_name:
+    description: VM instance name
+    value:
+      get_attr: [server1.KT_INTER_NODE, show, 'OS-EXT-SRV-ATTR:instance_name']
+  server0.KT_INTER_NODE:
+    description: VM UUID
+    value: {get_resource: server0.KT_INTER_NODE}
+  server0.KT_INTER_NODE-fip:
+    description: floating ip server0.KT_INTER_NODE-fip
+    value:
+      get_attr: [server0.KT_INTER_NODE-fip, ip]
+  server0.KT_INTER_NODE-test-port0:
+    description: Address for interface server0.KT_INTER_NODE-test-port0
+    value:
+      get_attr: [server0.KT_INTER_NODE-test-port0, fixed_ips,
+        0, ip_address]
+  server0.KT_INTER_NODE.hypervisor_hostname:
+    description: VM hypervisor name
+    value:
+      get_attr: [server0.KT_INTER_NODE, show, 'OS-EXT-SRV-ATTR:hypervisor_hostname']
+  server0.KT_INTER_NODE.instance_name:
+    description: VM instance name
+    value:
+      get_attr: [server0.KT_INTER_NODE, show, 'OS-EXT-SRV-ATTR:instance_name']
+  KT_INTER_NODE-default_security_group:
+    description: ID of Security Group
+    value: {get_resource: KT_INTER_NODE-default_security_group}
+  KT_INTER_NODE-test:
+    description: Network KT_INTER_NODE-test ID
+    value: {get_resource: KT_INTER_NODE-test}
+  KT_INTER_NODE-test-subnet0:
+    description: subnet KT_INTER_NODE-test-subnet0 ID
+    value: {get_resource: KT_INTER_NODE-test-subnet0}
+  KT_INTER_NODE-test-subnet0.gateway_ip:
+    description: Gateway for subnet KT_INTER_NODE-test-subnet0
+      ID
+    value:
+      get_attr: [KT_INTER_NODE-test-subnet0, gateway_ip]
+resources:
+  server1.KT_INTER_NODE:
+    depends_on: [server1.KT_INTER_NODE-test-port0, KT_INTER_NODE-server]
+    properties:
+      admin_user: ubuntu
+      config_drive: true
+      flavor: {get_resource: KT_INTER_NODE-server}
+      image: 	{ get_param: image_id }
+      key_name: {get_param: key_name}
+      name: server1.KT_INTER_NODE
+      networks:
+      - port: {get_resource: server1.KT_INTER_NODE-test-port0}
+      scheduler_hints:
+        different_host:
+        - {get_resource: server0.KT_INTER_NODE}
+        same_host: []
+    type: OS::Nova::Server
+  server1.KT_INTER_NODE-fip:
+    depends_on: [server1.KT_INTER_NODE-test-port0, KT_INTER_NODE-default_security_group]
+    properties: {pool: { get_param: external_net_name }}
+    type: OS::Nova::FloatingIP
+  server1.KT_INTER_NODE-fip-assoc:
+    depends_on: [server1.KT_INTER_NODE-test-port0, server1.KT_INTER_NODE-fip]
+    properties:
+      floatingip_id: {get_resource: server1.KT_INTER_NODE-fip}
+      port_id: {get_resource: server1.KT_INTER_NODE-test-port0}
+    type: OS::Neutron::FloatingIPAssociation
+  server1.KT_INTER_NODE-test-port0:
+    depends_on: [KT_INTER_NODE-test-subnet0, KT_INTER_NODE-default_security_group]
+    properties:
+      binding:vnic_type: normal
+      fixed_ips:
+      - subnet_id: {get_resource: KT_INTER_NODE-test-subnet0}
+      name: server1.KT_INTER_NODE-test-port0
+      network_id: {get_resource: KT_INTER_NODE-test}
+      port_security_enabled: true
+      security_groups: [KT_INTER_NODE-default_security_group]
+    type: OS::Neutron::Port
+  server0.KT_INTER_NODE:
+    depends_on: [server0.KT_INTER_NODE-test-port0, KT_INTER_NODE-server]
+    properties:
+      admin_user: ubuntu
+      config_drive: true
+      flavor: {get_resource: KT_INTER_NODE-server}
+      image: 	{ get_param: image_id }
+      key_name: { get_param: key_name }
+      name: server0.KT_INTER_NODE
+      networks:
+      - port: {get_resource: server0.KT_INTER_NODE-test-port0}
+      scheduler_hints:
+        different_host: []
+        same_host: []
+    type: OS::Nova::Server
+  server0.KT_INTER_NODE-fip:
+    depends_on: [server0.KT_INTER_NODE-test-port0, KT_INTER_NODE-default_security_group]
+    properties: {pool: { get_param: external_net_name }}
+    type: OS::Nova::FloatingIP
+  server0.KT_INTER_NODE-fip-assoc:
+    depends_on: [server0.KT_INTER_NODE-test-port0, server0.KT_INTER_NODE-fip]
+    properties:
+      floatingip_id: {get_resource: server0.KT_INTER_NODE-fip}
+      port_id: {get_resource: server0.KT_INTER_NODE-test-port0}
+    type: OS::Neutron::FloatingIPAssociation
+  server0.KT_INTER_NODE-test-port0:
+    depends_on: [KT_INTER_NODE-test-subnet0, KT_INTER_NODE-default_security_group]
+    properties:
+      binding:vnic_type: normal
+      fixed_ips:
+      - subnet_id: {get_resource: KT_INTER_NODE-test-subnet0}
+      name: server0.KT_INTER_NODE-test-port0
+      network_id: {get_resource: KT_INTER_NODE-test}
+      port_security_enabled: true
+      security_groups: [KT_INTER_NODE-default_security_group]
+    type: OS::Neutron::Port
+  KT_INTER_NODE-default_security_group:
+    properties:
+      description: Security Group allowing icmp and udp/tcp on all ports
+      name: KT_INTER_NODE-default_security_group
+      rules:
+      - {direction: egress, ethertype: IPv4, remote_ip_prefix: 0.0.0.0/0}
+      - {direction: egress, ethertype: IPv6, remote_ip_prefix: '::/0'}
+      - {direction: ingress, ethertype: IPv4, port_range_max: '65535', port_range_min: '1',
+        protocol: tcp, remote_ip_prefix: 0.0.0.0/0}
+      - {direction: ingress, ethertype: IPv4, port_range_max: '65535', port_range_min: '1',
+        protocol: udp, remote_ip_prefix: 0.0.0.0/0}
+      - {direction: ingress, ethertype: IPv4, protocol: icmp, remote_ip_prefix: 0.0.0.0/0}
+      - {direction: ingress, ethertype: IPv6, port_range_max: '65535', port_range_min: '1',
+        protocol: tcp, remote_ip_prefix: '::/0'}
+      - {direction: ingress, ethertype: IPv6, port_range_max: '65535', port_range_min: '1',
+        protocol: udp, remote_ip_prefix: '::/0'}
+      - {direction: ingress, ethertype: IPv6, protocol: icmp, remote_ip_prefix: '::/0'}
+    type: OS::Neutron::SecurityGroup
+  KT_INTER_NODE-server:
+    properties:
+      disk: 20
+      extra_specs: {'hw:cpu_policy': dedicated, 'hw:cpu_threads_policy': prefer, 'hw:mem_page_size': any}
+      ram: 4096
+      swap: 0
+      vcpus: 4
+    type: OS::Nova::Flavor
+  KT_INTER_NODE-test:
+    properties: {name: KT_INTER_NODE-test, port_security_enabled: true,
+      shared: false}
+    type: OS::Neutron::Net
+  KT_INTER_NODE-test-subnet0:
+    depends_on: KT_INTER_NODE-test
+    properties:
+      cidr: { get_param: subnet_cidr }
+      dns_nameservers: [8.8.8.8]
+      name: KT_INTER_NODE-test-subnet0
+      network_id: {get_resource: KT_INTER_NODE-test}
+    type: OS::Neutron::Subnet
+  KT_INTER_NODE-test-subnet0-if0:
+    depends_on: [KT_INTER_NODE-test-subnet0]
+    properties:
+      router_id: { get_param: router_id }
+      subnet_id: {get_resource: KT_INTER_NODE-test-subnet0}
+    type: OS::Neutron::RouterInterface
