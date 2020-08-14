@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "63fc99be_afd6cf3b",
+        "filename": "tests/orchestration/INTRA_NODE/heat/INTER_NODE_HOT.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 355
+      },
+      "writtenOn": "2020-08-14T05:22:23Z",
+      "side": 1,
+      "message": "There\u0027s a discrepancy.\n\nThe template is inter-node, but it is nested in the directory of INTRA_NODE.\n\nAlso, should we first classify the templates as between the topology types, or between heat and other orchestrators?",
+      "revId": "21126cae31cc8265bfb0ef0d832f7f691576379e",
+      "serverId": "4cada01b-0314-4fe0-84a1-f9ddc89863f9",
+      "unresolved": true
+    }
+  ]
+}
