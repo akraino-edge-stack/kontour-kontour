@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "65b5e3fb_6d3a552a",
+        "filename": "doc/chapters/chapter01.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 355
+      },
+      "writtenOn": "2020-08-24T07:06:04Z",
+      "side": 1,
+      "message": "nit: There\u0027s a typo in \"Performance\".",
+      "revId": "8854b82b4e3a3bcdcd5182b51c6d93b95bf50eef",
+      "serverId": "4cada01b-0314-4fe0-84a1-f9ddc89863f9",
+      "unresolved": true
+    }
+  ]
+}
