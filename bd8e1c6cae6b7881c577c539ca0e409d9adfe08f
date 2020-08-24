@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "739b43f1_f5274df2",
+        "filename": "tests/orchestration/INTRA_NODE/heat/INTRA_NODE_HOT.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 350
+      },
+      "writtenOn": "2020-08-24T03:45:41Z",
+      "side": 1,
+      "message": "nit: 2 VMs a single compute node. -\u003e 2 VMs on a single compute node.",
+      "revId": "bd8e1c6cae6b7881c577c539ca0e409d9adfe08f",
+      "serverId": "4cada01b-0314-4fe0-84a1-f9ddc89863f9",
+      "unresolved": true
+    }
+  ]
+}
