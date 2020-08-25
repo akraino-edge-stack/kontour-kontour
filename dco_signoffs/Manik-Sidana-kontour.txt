@@ -1,0 +1,2 @@
+I, Manik Sidana, hereby sign-off-by all of my past commits to this repo subject to the Developer Certificate of Origin (DCO), Version 1.1. In the past I have used emails: maniksidana019@gmail.com
+I773b1506f5770474035652900ce81c8584e4044d Repository structure for kontour
