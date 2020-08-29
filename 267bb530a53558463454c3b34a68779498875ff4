@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8d8ef883_cd5e428b",
+        "filename": "doc/chapters/chapter01.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 355
+      },
+      "writtenOn": "2020-08-29T12:49:53Z",
+      "side": 1,
+      "message": "Please maintain proper indentation for the tabular structure in the plaintext as well, if intended.",
+      "revId": "267bb530a53558463454c3b34a68779498875ff4",
+      "serverId": "4cada01b-0314-4fe0-84a1-f9ddc89863f9",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9bf5cd41_8bc35030",
+        "filename": "doc/chapters/chapter01.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 355
+      },
+      "writtenOn": "2020-08-29T12:49:53Z",
+      "side": 1,
+      "message": "Please use just a `%` or `%age` across the document. Makes it uniform.",
+      "revId": "267bb530a53558463454c3b34a68779498875ff4",
+      "serverId": "4cada01b-0314-4fe0-84a1-f9ddc89863f9",
+      "unresolved": true
+    }
+  ]
+}
